@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PENDING
+  TERMINATED
+  EXPIRED
+}
+
+model Users {
+  id                      String                    @id @default(uuid())
+  firstName               String
+  lastName                String
+  age                     Int
+  gender                  String
+  Subscriptions           Subscriptions[]
+  SubscriptionsExtentions SubscriptionsExtentions[]
+}
+
+model Subscriptions {
+  id                      String                    @id @default(uuid())
+  terminationReason       String
+  terminationComment      String
+  status                  SubscriptionStatus
+  userId                  String
+  productId               String
+  createdAt               DateTime
+  updatedAt               DateTime
+  activatedAt             DateTime
+  activeUntil             DateTime
+  terminatedAt            DateTime
+  user                    Users                     @relation(fields: [userId], references: [id])
+  product                 products                  @relation(fields: [productId], references: [id])
+  SubscriptionsExtentions SubscriptionsExtentions[]
+
+  @@unique([userId, productId])
+}
+
+model SubscriptionsExtentions {
+  id             String        @id @default(uuid())
+  startDate      DateTime
+  endDate        DateTime
+  subscriptionId String
+  subscription   Subscriptions @relation(fields: [subscriptionId], references: [id])
+  userId         String
+  user           Users         @relation(fields: [userId], references: [id])
+}
+
+model products {
+  id            String          @id @default(uuid())
+  slug          String          @unique
+  title         String
+  coreAttribute String
+  image         String          @default("[]")
+  Subscriptions Subscriptions[]
+  RentalPlans   RentalPlans[]
+}
+
+model RentalPlans {
+  id        String   @id @default(uuid())
+  productId String
+  product   products @relation(fields: [productId], references: [id])
+  period    String
+  price     Int
+}
