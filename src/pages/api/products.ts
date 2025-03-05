@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { validate } from "@/lib/validator";
 import { productCreationSchema } from '@/lib/schemas/products.schema';
 import { ProductService } from '@/lib/services/productService';
+import { ProductSchemaType } from '@/lib/schemas/products.schema';
 
 const handlers = {
   GET: async (req: NextApiRequest, res: NextApiResponse) => {
@@ -16,14 +17,14 @@ const handlers = {
     return res.status(200).json(result);
   },
   POST: validate(productCreationSchema, async (req: NextApiRequest, res: NextApiResponse) => {
-    const result = await ProductService.saveProduct(req.body);
+    const result = await ProductService.saveProduct(req.body as ProductSchemaType);
     return res.status(201).json({
       message: 'Record saved successfully',
       result
     })
   }),
   PUT: async (req: NextApiRequest, res: NextApiResponse) => {
-    
+
   },
   DELETE: async (req: NextApiRequest, res: NextApiResponse) => {
 
