@@ -1,7 +1,9 @@
-import Image from "next/image";
-
-export default function Home() {
-  return (
-    <></>
-  );
+import Image from 'next/image'
+import SubscriptionCard from '@/components/SubscriptionCard';
+export default function Main() {
+    return (
+        <div className="container">
+            <SubscriptionCard />
+        </div>
+    );
 }
