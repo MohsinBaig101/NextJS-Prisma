@@ -1,10 +1,8 @@
-import { describe, expect, test, vitest, vi } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import { createMocks, RequestMethod, createRequest, createResponse } from 'node-mocks-http'
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/__test__/__mocks__/prisma';
-vitest.mock('@/lib/prisma', () => ({
-    prisma,
-}));
+
 import handler from '@/pages/api/products';
 
 function mockRequestResponse(method: RequestMethod = 'GET') {
@@ -23,7 +21,7 @@ function mockRequestResponse(method: RequestMethod = 'GET') {
 }
 
 describe('Products API test suit', () => {
-    test('create product with invalid data', async () => {
+    test('should return 400, If request body is incorrect', async () => {
         const { req, res } = mockRequestResponse('POST');
         req.body = {
             // "slug":"test-2-slug",
@@ -65,7 +63,13 @@ describe('Products API test suit', () => {
                 }
             ]
         };
-        prisma.products.create.mockResolvedValue([]);
+        prisma.products.create.mockResolvedValue({
+            "id": "1",
+            "slug": "test-2-slug",
+            "title": "slug-title",
+            "coreAttribute": "Iphone 14 pro max",
+            "image": "image1"
+        });
         await handler(req, res);
         const errorMessage = res._getJSONData();
         expect(errorMessage.message).toBe('Record saved successfully')
@@ -73,9 +77,9 @@ describe('Products API test suit', () => {
     });
 
     test('get All Products', async () => {
-        const resObj = [{ name: 'Test' }]
+        const resObj = [{ id: "string", slug: "string", title: "string", coreAttribute: "string", image: "string" }];
         const { req, res } = mockRequestResponse('GET');
-        prisma.products.findMany.mockResolvedValueOnce(resObj);
+        prisma.products.findMany.mockResolvedValue(resObj);
         await handler(req, res);
         expect(res._getJSONData()).toEqual(resObj);
     })
