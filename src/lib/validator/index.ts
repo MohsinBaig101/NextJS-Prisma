@@ -8,10 +8,10 @@ export function validate(schema: ZodSchema, handler: (req: NextApiRequest, res: 
             return await handler(req, res);
         } catch (error: unknown) {
             if (error instanceof ZodError) {
-                return res.status(400).send({ message: 'Validation failed', errors: error.errors });
+                return res.status(400).json({ message: 'Validation failed', errors: error.errors });
             }
             if (error instanceof Error) {
-                return res.status(400).send({ message: error?.message });
+                return res.status(400).json({ message: error?.message });
             }
         }
     };

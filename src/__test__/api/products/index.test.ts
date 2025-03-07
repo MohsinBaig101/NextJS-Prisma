@@ -7,23 +7,22 @@ vitest.mock('@/lib/prisma', () => ({
 }));
 import handler from '@/pages/api/products';
 
+function mockRequestResponse(method: RequestMethod = 'GET') {
+    const {
+        req,
+        res,
+    }: {
+        req: NextApiRequest & ReturnType<typeof createRequest>;
+        res: NextApiResponse & ReturnType<typeof createResponse>;
+    } = createMocks({ method });
+    req.headers = {
+        'Content-Type': 'application/json',
+        'X-SESSION-TOKEN': 'authToken',
+    };
+    return { req, res };
+}
+
 describe('Products API test suit', () => {
-
-    function mockRequestResponse(method: RequestMethod = 'GET') {
-        const {
-            req,
-            res,
-        }: {
-            req: NextApiRequest & ReturnType<typeof createRequest>;
-            res: NextApiResponse & ReturnType<typeof createResponse>;
-        } = createMocks({ method });
-        req.headers = {
-            'Content-Type': 'application/json',
-            'X-SESSION-TOKEN': 'authToken',
-        };
-        return { req, res };
-    }
-
     test('create product with invalid data', async () => {
         const { req, res } = mockRequestResponse('POST');
         req.body = {
@@ -72,4 +71,12 @@ describe('Products API test suit', () => {
         expect(errorMessage.message).toBe('Record saved successfully')
         expect(res.statusCode).toBe(201);
     });
+
+    test('get All Products', async () => {
+        const resObj = [{ name: 'Test' }]
+        const { req, res } = mockRequestResponse('GET');
+        prisma.products.findMany.mockResolvedValueOnce(resObj);
+        await handler(req, res);
+        expect(res._getJSONData()).toEqual(resObj);
+    })
 });

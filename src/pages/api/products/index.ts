@@ -13,11 +13,11 @@ async function getProducts(req: NextApiRequest, res: NextApiResponse) {
       }
     }
   );
-  return res.status(200).send(result);
+  return res.status(200).json(result);
 }
 const saveProduct = validate(productCreationSchema, async (req: NextApiRequest, res: NextApiResponse) => {
   const result = await productService.saveProduct(req.body as ProductSchemaType);
-  return res.status(201).send({
+  return res.status(201).json({
     message: 'Record saved successfully',
     result
   })
@@ -33,7 +33,5 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   const reqMethod = req.method as string;
-  if (reqMethod) {
-    return await methods[reqMethod](req, res);
-  }
+  return await methods[reqMethod](req, res);
 }
