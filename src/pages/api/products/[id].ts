@@ -6,7 +6,7 @@ import { validate } from "@/lib/validator";
 export const getProduct = async (req: NextApiRequest, res: NextApiResponse) => {
     const { id } = req.query;
     const product = await productService.getProduct(id as string);
-    return res.status(200).send({
+    res.status(200).send({
         product
     });
 }
@@ -15,7 +15,7 @@ export const updateProduct = validate(productCreationSchema, async (req: NextApi
     const { id } = req.query;
     const body = req.body;
     await productService.updateProduct(id as string, body);
-    return res.status(200).send({
+    res.status(200).send({
         message: 'Product has been updated successfully'
     });
 });
@@ -23,12 +23,12 @@ export const updateProduct = validate(productCreationSchema, async (req: NextApi
 export const deleteProduct = async (req: NextApiRequest, res: NextApiResponse) => {
     const { id } = req.query;
     await productService.deleteProduct(id as string);
-    return res.status(200).send({
+    res.status(200).send({
         message: 'Record has been deleted successfully'
     })
 }
 
-const handlers: Record<string, (req: NextApiRequest, res: NextApiResponse) => Promise<any>> = {
+const handlers: Record<string, (req: NextApiRequest, res: NextApiResponse) => Promise<void>> = {
     GET: getProduct,
     PUT: updateProduct,
     DELETE: deleteProduct

@@ -5,7 +5,7 @@ import { productCreationSchema } from '@/lib/schemas/products.schema';
 import * as productService from '@/lib/services/productService';
 import { ProductSchemaType } from '@/lib/schemas/products.schema';
 
-async function getProducts(req: NextApiRequest, res: NextApiResponse) {
+async function getProducts(req: NextApiRequest, res: NextApiResponse): Promise<void> {
   const result = await prisma.products.findMany(
     {
       include: {
@@ -13,17 +13,17 @@ async function getProducts(req: NextApiRequest, res: NextApiResponse) {
       }
     }
   );
-  return res.status(200).json(result);
+  res.status(200).json(result);
 }
-const saveProduct = validate(productCreationSchema, async (req: NextApiRequest, res: NextApiResponse) => {
+const saveProduct = validate(productCreationSchema, async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   const result = await productService.saveProduct(req.body as ProductSchemaType);
-  return res.status(201).json({
+  res.status(201).json({
     message: 'Record saved successfully',
     result
   })
 });
 
-const methods: Record<string, (req: NextApiRequest, res: NextApiResponse) => Promise<any>> = {
+const methods: Record<string, (req: NextApiRequest, res: NextApiResponse) => Promise<void>> = {
   GET: getProducts,
   POST: saveProduct
 }

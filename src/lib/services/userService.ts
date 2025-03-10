@@ -7,7 +7,15 @@ export const createUser = async (body: createUserType): Promise<void> => {
             ...body
         }
     });
-} 
+}
+
+export const getUser = async (id: string) => {
+    return await prisma.users.findFirst({
+        where: {
+            id
+        }
+    })
+}
 
 export const getUsers = async () => {
     return await prisma.users.findMany();

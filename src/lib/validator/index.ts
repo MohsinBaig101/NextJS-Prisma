@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { ZodSchema, ZodError } from 'zod';
 
-export function validate(schema: ZodSchema, handler: (req: NextApiRequest, res: NextApiResponse) => Promise<any>) {
+export function validate(schema: ZodSchema, handler: (req: NextApiRequest, res: NextApiResponse) => Promise<void>) {
     return async (req: NextApiRequest, res: NextApiResponse) => {
         try {
             req.body = schema.parse(req.body);
